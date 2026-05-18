@@ -1,0 +1,13 @@
+# Авто-определение текстовых файлов
+* text=auto
+
+# Bash-скрипты — всегда LF (иначе ломаются на macOS/Linux)
+*.sh text eol=lf
+
+# PowerShell — CRLF
+*.ps1 text eol=crlf
+
+# Markdown / текст / данные — пусть git нормализует
+*.md text
+*.csv text
+*.py text eol=lf
