@@ -90,7 +90,7 @@ for src_dir in "$SKILLS_SRC"/*/; do
         current="$(readlink "$dst")"
         if [[ "$current" == "$src" ]]; then
             echo "  ${C_GRAY}уже синкнут (симлинк → $src)${C_RST}"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
         echo "  ${C_YELLOW}существует симлинк → $current${C_RST}"
@@ -101,14 +101,14 @@ for src_dir in "$SKILLS_SRC"/*/; do
         rm "$dst"
         ln -s "$src" "$dst"
         echo "  ${C_GREEN}пересоздал симлинк → $src${C_RST}"
-        ((replaced++))
+        replaced=$((replaced + 1))
         continue
     fi
 
     if [[ -d "$dst" ]]; then
         if [[ $FORCE -ne 1 ]]; then
             echo "  ${C_YELLOW}существует реальная папка. Пропускаю (используй --force чтобы заменить с бэкапом).${C_RST}"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
         backup="$dst.backup-$(date +%Y%m%d-%H%M%S)"
@@ -118,10 +118,10 @@ for src_dir in "$SKILLS_SRC"/*/; do
         fi
         mv "$dst" "$backup"
         echo "  ${C_MAGENTA}бэкап: $backup${C_RST}"
-        ((backed_up++))
+        backed_up=$((backed_up + 1))
         ln -s "$src" "$dst"
         echo "  ${C_GREEN}создал симлинк → $src${C_RST}"
-        ((created++))
+        created=$((created + 1))
         continue
     fi
 
@@ -132,10 +132,10 @@ for src_dir in "$SKILLS_SRC"/*/; do
 
     if ln -s "$src" "$dst"; then
         echo "  ${C_GREEN}создал симлинк → $src${C_RST}"
-        ((created++))
+        created=$((created + 1))
     else
         echo "  ${C_RED}ошибка${C_RST}"
-        ((errors++))
+        errors=$((errors + 1))
     fi
 done
 
