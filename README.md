@@ -6,9 +6,26 @@
 
 Папка `skills/` — каждый подкаталог это один скилл (формат [Anthropic Skills](https://github.com/anthropics/skills): `SKILL.md` с YAML-фронтматтером + опциональные ресурсы).
 
-Папка `scripts/` — установочные скрипты:
-- `sync.ps1` — для Windows (использует Junction, права админа не нужны)
-- `sync.sh` — для macOS / Linux (использует обычные симлинки)
+Папка `scripts/`:
+- `sync.{ps1,sh}` — **consumer-режим**: репо это источник правды, в `~/.claude/skills/<имя>` создаются junction-ы / симлинки на репо. Для свежих машин и друзей.
+- `link-from-local.{ps1,sh}` — **publisher-режим**: `~/.claude/skills/` остаётся источником правды, в репо `skills/` подменяется на junction → `~/.claude/skills/`. Для машины, где уже наработан локальный набор скиллов и его нельзя трогать.
+
+## Два режима
+
+```
+consumer (для друзей, свежих машин)        publisher (для машины с уже наработанными скиллами)
+
+  repo/skills/<X>     ← реальные файлы       repo/skills/         ← junction
+        ▲                                            │
+        │ junction                                    ▼
+  ~/.claude/skills/<X>                       ~/.claude/skills/<X>  ← реальные файлы
+```
+
+В **consumer-режиме** правки делаются в `~/.claude/skills/<X>/...`, но физически правят файлы в репо (через junction). `git push` отправляет на GitHub.
+
+В **publisher-режиме** правки делаются в `~/.claude/skills/<X>/...` напрямую, и через единый junction `repo/skills` git видит их в репо. `git push` отправляет на GitHub.
+
+Снаружи (на GitHub) оба режима выглядят одинаково — реальные файлы в `skills/<имя>/`.
 
 ## Установка на новой машине
 
@@ -36,6 +53,28 @@ cd ~/claude-skills
 ```
 
 Те же флаги: `--dry-run`, `--force`, `--only caveman,tdd`.
+
+### Publisher-режим (на машине с уже наработанными скиллами)
+
+Если на машине уже есть `~/.claude/skills/<...>` и менять их не хочется, а в репо нужно складывать те же файлы:
+
+```powershell
+# Windows
+git clone https://github.com/comandante4e/claude-skills.git $HOME\claude-skills
+cd $HOME\claude-skills
+.\scripts\link-from-local.ps1 -Force
+```
+
+```bash
+# macOS / Linux
+git clone https://github.com/comandante4e/claude-skills.git ~/claude-skills
+cd ~/claude-skills
+./scripts/link-from-local.sh --force
+```
+
+После этого `repo/skills/` — это junction / симлинк на `~/.claude/skills/`, и обычный `git add -A && git commit -m '...' && git push` отправит локальные правки на GitHub.
+
+> **Важно:** в publisher-режиме `sync.{ps1,sh}` намеренно откажется работать — он определит, что `skills/` это симлинк/junction, и попросит использовать `link-from-local` вместо себя.
 
 ## Workflow
 

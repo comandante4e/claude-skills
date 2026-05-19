@@ -35,6 +35,14 @@ if (-not (Test-Path $skillsSrc)) {
     Write-Error "Не найдена папка $skillsSrc. Запускай из клонированного репо."
 }
 
+# Предохранитель: если skills/ это junction/симлинк — мы в publisher-режиме, sync.ps1 не применим
+$skillsSrcItem = Get-Item $skillsSrc -Force
+if ($skillsSrcItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+    $target = $skillsSrcItem.Target | Select-Object -First 1
+    Write-Error "skills/ это junction → $target. Похоже, мы в publisher-режиме. sync.ps1 не применим. Используй link-from-local.ps1 или удали junction вручную."
+    exit 1
+}
+
 if (-not (Test-Path $skillsDst)) {
     if ($DryRun) {
         Write-Host "[dry-run] создал бы $skillsDst" -ForegroundColor Yellow

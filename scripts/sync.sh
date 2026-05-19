@@ -50,6 +50,13 @@ if [[ ! -d "$SKILLS_SRC" ]]; then
     exit 1
 fi
 
+# Предохранитель: если skills/ это симлинк — мы в publisher-режиме, sync.sh не применим
+if [[ -L "$SKILLS_SRC" ]]; then
+    target="$(readlink "$SKILLS_SRC")"
+    echo "skills/ это симлинк → $target. Похоже, мы в publisher-режиме. sync.sh не применим. Используй link-from-local.sh или удали симлинк вручную." >&2
+    exit 1
+fi
+
 if [[ ! -d "$SKILLS_DST" ]]; then
     if [[ $DRY_RUN -eq 1 ]]; then
         echo "${C_YELLOW}[dry-run] создал бы $SKILLS_DST${C_RST}"
