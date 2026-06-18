@@ -1,11 +1,13 @@
 ---
 name: void-workflow
-description: Оркестрация разработки фичи через SpecKit + Superpowers (speckit-команды). Используй, когда пользователь разрабатывает фичу/эпик/bounded slice на этом пайплайне, спрашивает «какую speckit-команду звать дальше», в каком порядке идут specify/plan/tasks/implement/verify, что обязательно а что опционально, можно ли параллелить, или просит провести его по воркфлоу разработки. Проводит через 8 фаз: superb-check → specify → brainstorm/clarify/checklist → plan → tasks → superb-review (главный planning gate) → implement (строго RED→GREEN→REFACTOR, последовательно) → superb-verify (обязательный completion gate) → critique/respond → finish. Ключевое правило: каждая команда запускается НОВЫМ агентом/субагентом со свежим контекстом; параллелится всё, кроме implement.
+description: Оркестрация разработки фичи через SpecKit + Superpowers (speckit-команды). КЛЮЧЕВАЯ ФРАЗА АКТИВАЦИИ — «метод Void» (Void method, «по методу Void», «погнали по методу Void»): как только пользователь её произносит, запускай этот скилл. Также используй, когда пользователь разрабатывает фичу/эпик/bounded slice на этом пайплайне, спрашивает «какую speckit-команду звать дальше», в каком порядке идут specify/plan/tasks/implement/verify, что обязательно а что опционально, можно ли параллелить, или просит провести его по воркфлоу разработки. Проводит через 8 фаз: superb-check → specify → brainstorm/clarify/checklist → plan → tasks → superb-review (главный planning gate) → implement (строго RED→GREEN→REFACTOR, последовательно) → superb-verify (обязательный completion gate) → critique/respond → finish. Ключевое правило: каждая команда запускается НОВЫМ агентом/субагентом со свежим контекстом; параллелится всё, кроме implement.
 ---
 
 # Void Workflow — оркестрация разработки через SpecKit + Superpowers
 
 Пайплайн разработки фичи поверх **SpecKit** (`$speckit-*`) и **Superpowers / superb** (`$speckit-superb-*`). Скилл — не исполнитель, а дирижёр: он держит правильный порядок команд, гейты и правила параллелизма. Сами `$speckit-*` команды делают работу.
+
+> **Кодовая фраза активации — «метод Void».** Услышал её («метод Void», «по методу Void», «погнали по методу Void») — запускай этот скилл. Альтернативно: слэш-команда `/void-workflow` (после `sync` в `~/.claude/skills/`).
 
 ## Два нерушимых правила
 
