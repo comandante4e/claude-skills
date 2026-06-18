@@ -31,6 +31,29 @@ description: Оркестрация разработки фичи через Spe
 
 Мнемоника: **изолируй worktree'ами то, что параллелишь; внутри одного дерева — только то, что не пишет и не читает один и тот же артефакт; потом собери всё в одну ветку.**
 
+### Рецепт: per-slice worktree
+
+```bash
+# 1. дерево под slice — своя ветка и каталог (от integration-ветки)
+git worktree add ../<repo>-slice-x -b slice/x
+
+# 2. в этом каталоге поднимаешь СВОЙ инстанс приложения — свой порт/env/БД,
+#    чтобы тесты и verify не дрались с другими деревьями, напр.:
+#    PORT=3101 DATABASE_URL=postgres://.../slice_x  npm run dev
+
+# 3. внутри дерева гоняешь пайплайн slice ПОСЛЕДОВАТЕЛЬНО (каждая команда — свежий субагент):
+#    $speckit-specify → plan → tasks → $speckit-superb-review
+#    → $speckit-implement (RED→GREEN→REFACTOR) → $speckit-superb-verify → $speckit-superb-finish
+
+# 4. verify PASS + finish → собираешь в integration-ветку:
+git switch integration && git merge --no-ff slice/x        # или через PR
+
+# 5. убираешь дерево
+git worktree remove ../<repo>-slice-x && git branch -d slice/x
+```
+
+Разные `slice/x`, `slice/y`, … запускаются **параллельно** (шаги 1–3 в своих деревьях), сходятся в `integration` на шаге 4 по очереди. В Claude Code субагенту можно выдать worktree-изоляцию прямо средствами харнесса (один агент = одно дерево) — тогда создание и уборку дерева (шаги 1 и 5) берёт на себя харнесс.
+
 ## Конвейер — 8 фаз
 
 ### 1. Перед новой фичей — `$speckit-superb-check`
