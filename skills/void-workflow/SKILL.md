@@ -119,3 +119,7 @@ superb-check → specify → brainstorm → clarify (если надо) → chec
 3. Не проходи сквозь гейты (`superb-review`, `superb-verify`) без явного PASS.
 4. На `implement` — не параллель, иди task-by-task RED→GREEN→REFACTOR.
 5. Если slice несколько — параллель **только независимые**, каждый в своём `git worktree` (+ свой инстанс приложения), потом сборка в одну ветку. Зависимые по файлам шаги (напр. critique→respond) — последовательно.
+
+---
+
+**Codex CLI (GPT под капотом):** версия с поправкой на механику (нет субагентов и harness-worktree — отдельные сессии / `codex exec` на команду, инстансы Codex на worktree) — [CODEX.md](CODEX.md).
