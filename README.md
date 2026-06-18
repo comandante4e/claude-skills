@@ -6,6 +6,10 @@
 
 Папка `skills/` — каждый подкаталог это один скилл (формат [Anthropic Skills](https://github.com/anthropics/skills): `SKILL.md` с YAML-фронтматтером + опциональные ресурсы).
 
+Каждый скилл идёт в **двух видах**:
+- **`SKILL.md`** — версия для **Claude Code** (Anthropic-формат, авто-триггер по `description`, субагенты, MCP, harness-worktree).
+- **`CODEX.md`** — та же логика, адаптированная под **Codex CLI** (GPT под капотом): куда класть (`AGENTS.md` / `~/.codex/prompts/<name>.md`), как активировать без авто-триггера, и дельта механики (нет нативных субагентов → отдельная сессия / `codex exec` на шаг; нет harness-worktree → ручной `git worktree` + инстансы Codex; bundled-скрипты запускаются явно). Чисто-инструкционные скиллы переносятся 1-в-1 — у них `CODEX.md` короткий и описывает только размещение/активацию.
+
 Папка `scripts/`:
 - `sync.{ps1,sh}` — **consumer-режим**: репо это источник правды, в `~/.claude/skills/<имя>` создаются junction-ы / симлинки на репо. Для свежих машин и друзей.
 - `link-from-local.{ps1,sh}` — **publisher-режим**: `~/.claude/skills/` остаётся источником правды, в репо `skills/` подменяется на junction → `~/.claude/skills/`. Для машины, где уже наработан локальный набор скиллов и его нельзя трогать.
@@ -112,7 +116,7 @@ git push
 |---|---|
 | Claude Code | `~/.claude/skills/<name>/` (этим занимается `sync.ps1`/`sync.sh`) |
 | Cursor | `.cursor/rules/<name>.mdc` в корне проекта |
-| Codex CLI | `AGENTS.md` или конфиг проекта |
+| Codex CLI | `AGENTS.md` или `~/.codex/prompts/<name>.md` — готовая адаптация лежит в `skills/<name>/CODEX.md` |
 | Aider | conventions-файл, указанный в `.aider.conf.yml` |
 | web Claude / ChatGPT | вставить содержимое `SKILL.md` в Project Knowledge / Custom Instructions |
 
